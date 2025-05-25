@@ -1,0 +1,30 @@
+services:
+  rtmp-server:
+    image: bluenviron/mediamtx:1.12.2
+    container_name: r2r-rtmp-server
+    ports:
+      - "1935:1935"
+    volumes:
+      - ./rtmp-server.yml:/mediamtx.yml
+      - logdata:/app/logs
+    restart: unless-stopped
+
+  rtsp-server:
+    image: bluenviron/mediamtx:1.12.2
+    container_name: r2r-rtsp-server
+    ports:
+      - "8554:8554"
+    volumes:
+      - ./rtsp-server.yml:/mediamtx.yml
+    restart: unless-stopped
+
+  converter:
+    container_name: r2r-converter
+    build: ./converter
+    volumes:
+      - logdata:/app/logs
+    depends_on:
+      - rtmp-server
+
+volumes:
+  logdata:
